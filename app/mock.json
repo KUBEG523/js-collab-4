@@ -1,0 +1,26 @@
+[
+  {
+    "tytul": "Awaria drukarki sieciowej na 2 piętrze",
+    "opis": "Drukarka nie pobiera papieru z podajnika głównego i wyświetla kod błędu E04.",
+    "priorytet": "medium",
+    "status": "new"
+  },
+  {
+    "tytul": "Brak dostępu do firmowego VPN",
+    "opis": "Wygasł certyfikat użytkownika przy próbie połączenia z pracy zdalnej.",
+    "priorytet": "high",
+    "status": "doing"
+  },
+  {
+    "tytul": "Aktualizacja pakietu biurowego",
+    "opis": "Instalacja najnowszej wersji oprogramowania na stanowisku księgowości.",
+    "priorytet": "low",
+    "status": "done"
+  },
+  {
+    "tytul": "Wymiana uszkodzonej myszki i klawiatury",
+    "opis": "Lewy przycisk myszy przestał reagować na kliknięcia.",
+    "priorytet": "low",
+    "status": "new"
+  }
+]
