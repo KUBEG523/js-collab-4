@@ -1,10 +1,10 @@
 const lista = document.getElementById("list-zgloszenia");
 
 // tablica dla zgloszen
-let zgloszenia = [];
+let zgloszenia = JSON.parse(localStorage.getItem("zgloszenia")) || [];
 
 // id tablicy
-let tablicaID = 1;
+let tablicaID = Number(localStorage.getItem("tablica")) || 1;
 
 // zmienna do aktywnch zgloszen :3
 let aktywneLiczba = 0;
@@ -51,11 +51,11 @@ function liczbaZgloszen() {
 
 // usunięcie zgłoszenia
 function usunZgloszenie(event) {
+  let usuniecie = JSON.parse(localStorage.getItem("zgloszenia")) || [];
   const element = event.currentTarget.closest("li");
   if (element) {
     let index = zgloszenia.findIndex(
-      (zgloszenie) => zgloszenie.id == Number(element.dataset.id),
-      localStorage.removeItem("zgloszenie")
+      (zgloszenie) => zgloszenie.id == Number(element.dataset.id)
     );
 
     if (index != -1) {
@@ -64,7 +64,6 @@ function usunZgloszenie(event) {
 
     element.remove();
   }
-
   liczbaZgloszen();
 }
 
@@ -78,6 +77,7 @@ function zmianaStatusu(event) {
   });
 
   liczbaZgloszen();
+  localStorage.setItem("zgloszenia", JSON.stringify(zgloszenia));
   return aktywneLiczba;
 }
 
@@ -138,12 +138,7 @@ document
       btnDelete.type = "button";
       btnDelete.textContent = "Usuń";
       btnDelete.addEventListener("click", usunZgloszenie);
-
-      // dodanie zgłoszenia do local storage
-      localStorage.setItem("zgloszenie", JSON.stringify(zgloszenie));
-      let zapisane = JSON.parse(localStorage.getItem("zgloszenie"));
-      localStorage.zgloszenie.id++;
-
+      
       // kontener na inputy
       const inputkontener = document.createElement("div");
 
@@ -155,6 +150,7 @@ document
 
       // zwiekszenie id tablicy dla wpisaywania w tablice
       tablicaID++;
+      localStorage.setItem("tablica", tablicaID);
       zgloszenia.push(zgloszenie);
       liczbaZgloszen();
       document.getElementById("form-title").value = "";
