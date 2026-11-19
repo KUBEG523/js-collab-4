@@ -1,0 +1,143 @@
+
+[
+  {
+    "id": 1,
+    "tytul": "Problem z komputerem ucznia",
+    "opis": "Komputer nie uruchamia systemu Windows.",
+    "priorytet": "high",
+    "status": "new"
+  },
+  {
+    "id": 2,
+    "tytul": "Brak dostępu do drukarki",
+    "opis": "Drukarka w sali 204 nie odpowiada na polecenia.",
+    "priorytet": "medium",
+    "status": "doing"
+  },
+  {
+    "id": 3,
+    "tytul": "Nie działa projektor multimedialny",
+    "opis": "Projektor nie wyświetla obrazu z komputera nauczyciela.",
+    "priorytet": "high",
+    "status": "new"
+  },
+  {
+    "id": 4,
+    "tytul": "Problem z połączeniem internetowym",
+    "opis": "W sali komputerowej występują częste przerwy w dostępie do internetu.",
+    "priorytet": "high",
+    "status": "doing"
+  },
+  {
+    "id": 5,
+    "tytul": "Aktualizacja oprogramowania szkolnego",
+    "opis": "Należy zainstalować najnowszą wersję oprogramowania na komputerach.",
+    "priorytet": "low",
+    "status": "done"
+  },
+  {
+    "id": 6,
+    "tytul": "Uszkodzona klawiatura komputerowa",
+    "opis": "Kilka klawiszy na klawiaturze nie reaguje na naciskanie.",
+    "priorytet": "medium",
+    "status": "new"
+  },
+  {
+    "id": 7,
+    "tytul": "Brak dźwięku w komputerze",
+    "opis": "Komputer nie odtwarza dźwięku pomimo podłączonych głośników.",
+    "priorytet": "medium",
+    "status": "doing"
+  },
+  {
+    "id": 8,
+    "tytul": "Problem z logowaniem do systemu",
+    "opis": "Uczeń nie może zalogować się na swoje konto szkolne.",
+    "priorytet": "high",
+    "status": "new"
+  },
+  {
+    "id": 9,
+    "tytul": "Wymiana uszkodzonej myszy",
+    "opis": "Mysz komputerowa przestała reagować na ruch.",
+    "priorytet": "low",
+    "status": "done"
+  },
+  {
+    "id": 10,
+    "tytul": "Nie działa tablica interaktywna",
+    "opis": "Tablica nie reaguje na dotyk i nie komunikuje się z komputerem.",
+    "priorytet": "high",
+    "status": "doing"
+  },
+  {
+    "id": 11,
+    "tytul": "Problem z instalacją programu",
+    "opis": "Instalator programu zgłasza błąd podczas instalacji.",
+    "priorytet": "medium",
+    "status": "new"
+  },
+  {
+    "id": 12,
+    "tytul": "Brak miejsca na dysku komputera",
+    "opis": "Dysk systemowy jest prawie całkowicie zapełniony.",
+    "priorytet": "medium",
+    "status": "doing"
+  },
+  {
+    "id": 13,
+    "tytul": "Niepoprawne działanie przeglądarki",
+    "opis": "Przeglądarka internetowa często się zawiesza i zamyka.",
+    "priorytet": "low",
+    "status": "new"
+  },
+  {
+    "id": 14,
+    "tytul": "Awaria gniazda sieciowego",
+    "opis": "Gniazdo Ethernet w sali 105 nie zapewnia połączenia sieciowego.",
+    "priorytet": "high",
+    "status": "done"
+  },
+  {
+    "id": 15,
+    "tytul": "Konfiguracja nowego konta użytkownika",
+    "opis": "Potrzebne jest utworzenie konta dla nowego pracownika szkoły.",
+    "priorytet": "low",
+    "status": "new"
+  },
+  {
+    "id": 16,
+    "tytul": "Problem z aktualizacją systemu",
+    "opis": "Aktualizacja systemu Windows kończy się komunikatem o błędzie.",
+    "priorytet": "medium",
+    "status": "doing"
+  },
+  {
+    "id": 17,
+    "tytul": "Uszkodzony kabel monitora",
+    "opis": "Monitor traci sygnał z komputera z powodu uszkodzonego przewodu.",
+    "priorytet": "medium",
+    "status": "done"
+  },
+  {
+    "id": 18,
+    "tytul": "Problem z dostępem do folderu",
+    "opis": "Użytkownik nie posiada uprawnień do otwarcia folderu sieciowego.",
+    "priorytet": "low",
+    "status": "new"
+  },
+  {
+    "id": 19,
+    "tytul": "Nieprawidłowe działanie skanera",
+    "opis": "Skaner nie wykrywa dokumentów umieszczonych na szybie.",
+    "priorytet": "medium",
+    "status": "done"
+  },
+  {
+    "id": 20,
+    "tytul": "Awaria komputera w sekretariacie",
+    "opis": "Komputer w sekretariacie samoczynnie uruchamia się ponownie.",
+    "priorytet": "high",
+    "status": "new"
+  }
+]
