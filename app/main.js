@@ -170,6 +170,7 @@ function filtrujZgloszenia() {
 
   zgloszenia.forEach((zgloszenie) => {
     const element = lista.querySelector(`li[data-id="${zgloszenie.id}"]`);
+    if (!element) return;
 
     const filtrstatus =
       statusFiltra == "all" || zgloszenie.status == statusFiltra;
@@ -204,3 +205,70 @@ document
   });
 
 liczbaZgloszen();
+
+
+window.ustawZgloszenia = (noweDane) => {
+  zgloszenia = noweDane;
+
+  tablicaID = zgloszenia.length > 0
+    ? Math.max(...zgloszenia.map(z => z.id)) + 1
+    : 1;
+
+  // Usunięcie poprzednich zgłoszeń z HTML
+  lista.innerHTML = "";
+
+  // Utworzenie nowych zgłoszeń
+  zgloszenia.forEach((zgloszenie) => {
+
+    const noweZgloszenie = document.createElement("li");
+    noweZgloszenie.dataset.id = zgloszenie.id;
+    noweZgloszenie.classList.add("list-element-li");
+
+    const tekstzgloszenia = document.createElement("span");
+    tekstzgloszenia.className = "list-text";
+
+    tekstzgloszenia.textContent =
+      "Tytuł: " +
+      zgloszenie.tytul +
+      ". Opis: " +
+      zgloszenie.opis +
+      " | Priorytet: " +
+      zgloszenie.priorytet;
+
+    const status = document.createElement("select");
+
+    status.setAttribute(
+      "aria-label",
+      "Status zgłoszenia " + zgloszenie.id
+    );
+
+    statusOpcje.forEach((opcja) => {
+      const opcje = document.createElement("option");
+
+      opcje.value = opcja.value;
+      opcje.text = opcja.tekst;
+
+      status.appendChild(opcje);
+    });
+
+    status.value = zgloszenie.status;
+    status.addEventListener("change", zmianaStatusu);
+
+    const btnDelete = document.createElement("button");
+
+    btnDelete.type = "button";
+    btnDelete.textContent = "Usuń";
+    btnDelete.addEventListener("click", usunZgloszenie);
+
+    const inputkontener = document.createElement("div");
+
+    inputkontener.className = "list-inputs";
+    inputkontener.append(status, btnDelete);
+
+    noweZgloszenie.append(tekstzgloszenia, inputkontener);
+
+    lista.appendChild(noweZgloszenie);
+  });
+
+  liczbaZgloszen();
+};
