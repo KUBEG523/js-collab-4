@@ -1,4 +1,4 @@
-const lista = document.getElementById("list-zgloszenia");
+  const lista = document.getElementById("list-zgloszenia");
 
 // tablica dla zgloszen
 let zgloszenia = [];
@@ -209,6 +209,7 @@ liczbaZgloszen();
 
 window.ustawZgloszenia = (noweDane) => {
   zgloszenia = noweDane;
+  window.zgloszenia = zgloszenia;
 
   tablicaID = zgloszenia.length > 0
     ? Math.max(...zgloszenia.map(z => z.id)) + 1

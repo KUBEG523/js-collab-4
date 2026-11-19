@@ -19,6 +19,7 @@ const blokujInterfejs = (blokada)=> {
   });
   
   document.getElementById("import_btn-JS").disabled = blokada;
+  document.getElementById("export_btn-JS").disabled = blokada;
 
   const lokalnyImport = document.getElementById("import_btn-local-JS");
 
