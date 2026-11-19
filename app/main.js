@@ -1,182 +1,153 @@
+
+import Storage from "./modules/localStorage.js";
+
 const lista = document.getElementById("list-zgloszenia");
 
-// tablica dla zgloszen
-let zgloszenia = JSON.parse(localStorage.getItem("zgloszenia")) || [];
+let zgloszenia = Storage.pobierz();
+let tablicaID = Storage.pobierzID();
 
-// id tablicy
-let tablicaID = Number(localStorage.getItem("tablica")) || 1;
+// zabezpieczenie przed powtórzeniem ID
+if (zgloszenia.length > 0) {
+  const maxID = Math.max(...zgloszenia.map(z => z.id));
+  if (tablicaID <= maxID) {
+    tablicaID = maxID + 1;
+  }
+}
 
-// zmienna do aktywnch zgloszen :3
 let aktywneLiczba = 0;
 
 let statusFiltra = "all";
 let priorytetFiltra = "all";
 
-// obiektówka do utworzenia droplisty Status
-let statusOpcje = [
+const statusOpcje = [
   { value: "new", tekst: "Nowe" },
   { value: "doing", tekst: "W trakcie" },
-  { value: "done", tekst: "Zrobione" },
+  { value: "done", tekst: "Zrobione" }
 ];
 
-//sprawdzenie liczby zgłoszeń
-function liczbaZgloszen() {
-  let liczba = zgloszenia.length;
-  aktywneLiczba = 0;
+// tworzenie elementu zgłoszenia
+function utworzElement(zgloszenie) {
+  const noweZgloszenie = document.createElement("li");
 
-  zgloszenia.forEach((zgloszenie) => {
-    if (zgloszenie.status == "new" || zgloszenie.status == "doing") {
-      aktywneLiczba++;
-    }
+  noweZgloszenie.dataset.id = zgloszenie.id;
+  noweZgloszenie.classList.add("list-element-li");
+
+  noweZgloszenie.textContent =
+    "Tytuł: " + zgloszenie.tytul +
+    ". Opis: " + zgloszenie.opis +
+    " | Priorytet: " + zgloszenie.priorytet + " ";
+
+  // select statusu
+  const status = document.createElement("select");
+
+  status.setAttribute(
+    "aria-label",
+    "Status zgłoszenia " + zgloszenie.id
+  );
+
+  status.value = zgloszenie.status;
+
+  status.addEventListener("change", function () {
+    zgloszenie.status = status.value;
+
+    Storage.zmienStatus(zgloszenie.id, status.value);
+    liczbaZgloszen();
   });
 
-  document.getElementById("all_ctr-zgloszenia-js").textContent = liczba;
-  document.getElementById("active_ctr-zgloszenia-js").textContent =
-    aktywneLiczba;
+  statusOpcje.forEach(opcja => {
+    const opt = document.createElement("option");
 
-  const pustalista = document.getElementById("pusta-lista");
-  if (pustalista) {
-    pustalista.remove();
-  }
+    opt.value = opcja.value;
+    opt.textContent = opcja.tekst;
 
-  if (liczba == 0) {
-    const tekst = document.createElement("li");
-    tekst.id = "pusta-lista";
-    tekst.textContent = "Pusta lista";
-    lista.appendChild(tekst);
-  }
+    status.appendChild(opt);
+  });
+
+  // ustawienie aktualnego statusu
+  status.value = zgloszenie.status;
+
+  // przycisk usuwania
+  const btnDelete = document.createElement("button");
+
+  btnDelete.type = "button";
+  btnDelete.textContent = "Usuń";
+
+  btnDelete.addEventListener("click", function () {
+    zgloszenia = zgloszenia.filter(
+      z => z.id !== zgloszenie.id
+    );
+
+    Storage.usun(zgloszenie.id);
+
+    renderujZgloszenia();
+    liczbaZgloszen();
+  });
+
+  noweZgloszenie.appendChild(status);
+  noweZgloszenie.appendChild(btnDelete);
+
+  return noweZgloszenie;
+}
+
+// wyświetlanie wszystkich zgłoszeń
+function renderujZgloszenia() {
+  lista.innerHTML = "";
+
+  zgloszenia.forEach(zgloszenie => {
+    const element = utworzElement(zgloszenie);
+    lista.appendChild(element);
+  });
 
   filtrujZgloszenia();
 }
 
-// usunięcie zgłoszenia
-function usunZgloszenie(event) {
-  let usuniecie = JSON.parse(localStorage.getItem("zgloszenia")) || [];
-  const element = event.currentTarget.closest("li");
-  if (element) {
-    let index = zgloszenia.findIndex(
-      (zgloszenie) => zgloszenie.id == Number(element.dataset.id)
-    );
+// liczba zgłoszeń
+function liczbaZgloszen() {
+  const liczba = zgloszenia.length;
+  aktywneLiczba = 0;
 
-    if (index != -1) {
-      zgloszenia.splice(index, 1);
-    }
-
-    element.remove();
-  }
-  liczbaZgloszen();
-}
-
-function zmianaStatusu(event) {
-  const element = event.target.closest("li");
-
-  zgloszenia.forEach((zgloszenie) => {
-    if (zgloszenie.id == Number(element.dataset.id)) {
-      zgloszenie.status = event.target.value;
-    }
-  });
-
-  liczbaZgloszen();
-  localStorage.setItem("zgloszenia", JSON.stringify(zgloszenia));
-  return aktywneLiczba;
-}
-
-
-// dodawanie zgłoszenia
-document
-  .getElementById("form-zgloszenia-JS")
-  .addEventListener("submit", function (event) {
-    event.preventDefault();
-    let zgloszenie = {
-      id: tablicaID,
-      tytul: document.getElementById("form-title").value.trim(),
-      opis: document.getElementById("form-description").value.trim(),
-      priorytet: document.getElementById("form-priority").value,
-      status: "new",
-    };
-
-    // warunek czy sa takie same tytuly i czy tablica nie przekroczyla rozmiaru
+  zgloszenia.forEach(zgloszenie => {
     if (
-      !zgloszenia.some(
-        (istniejaceZgloszenie) =>
-          document.getElementById("form-title").value ===
-          istniejaceZgloszenie.tytul,
-      )
+      zgloszenie.status == "new" ||
+      zgloszenie.status == "doing"
     ) {
-      //dodawanie kontenera dla zgloszenia
-      const noweZgloszenie = document.createElement("li");
-      noweZgloszenie.dataset.id = zgloszenie.id;
-      noweZgloszenie.classList.add("list-element-li");
-
-      //dodanie tekstu dla zgloszenia
-      const tekstzgloszenia = document.createElement("span");
-      tekstzgloszenia.className = "list-text";
-
-      tekstzgloszenia.textContent =
-        "Tytuł: " +
-        zgloszenie.tytul +
-        ". Opis: " +
-        zgloszenie.opis +
-        " | Priorytet: " +
-        zgloszenie.priorytet +
-        " ";
-
-      //przyciski dla zgloszen
-
-      const status = document.createElement("select");
-      status.setAttribute("aria-label", "Status zgłoszenia " + zgloszenie.id);
-      status.addEventListener("change", zmianaStatusu);
-      statusOpcje.forEach((opcja) => {
-        const opcje = document.createElement("option");
-        opcje.value = opcja.value;
-        opcje.text = opcja.tekst;
-
-        status.appendChild(opcje);
-      });
-
-      const btnDelete = document.createElement("button");
-      btnDelete.type = "button";
-      btnDelete.textContent = "Usuń";
-      btnDelete.addEventListener("click", usunZgloszenie);
-      
-      // kontener na inputy
-      const inputkontener = document.createElement("div");
-
-      inputkontener.className = "list-inputs";
-      inputkontener.append(status, btnDelete);
-
-      noweZgloszenie.append(tekstzgloszenia, inputkontener);
-      lista.appendChild(noweZgloszenie);
-
-      // zwiekszenie id tablicy dla wpisaywania w tablice
-      tablicaID++;
-      localStorage.setItem("tablica", tablicaID);
-      zgloszenia.push(zgloszenie);
-      liczbaZgloszen();
-      document.getElementById("form-title").value = "";
-      document.getElementById("form-description").value = "";
-    } else {
-      alert("nie moga byc dwa takie same zgłoszenia");
-      return;
+      aktywneLiczba++;
     }
   });
 
-// filtorwanie
+  document.getElementById("all_ctr-zgloszenia-js")
+    .textContent = liczba;
+
+  document.getElementById("active_ctr-zgloszenia-js")
+    .textContent = aktywneLiczba;
+
+  renderujZgloszenia();
+}
+
+// filtrowanie
 function filtrujZgloszenia() {
   let widoczne = 0;
 
-  const komunikatbrakfiltru = document.getElementById("brak-wynikow");
-  if (komunikatbrakfiltru) {
-    komunikatbrakfiltru.remove();
+  const komunikat = document.getElementById("brak-wynikow");
+
+  if (komunikat) {
+    komunikat.remove();
   }
 
-  zgloszenia.forEach((zgloszenie) => {
-    const element = lista.querySelector(`li[data-id="${zgloszenie.id}"]`);
+  zgloszenia.forEach(zgloszenie => {
+    const element = lista.querySelector(
+      `li[data-id="${zgloszenie.id}"]`
+    );
+
+    if (!element) return;
 
     const filtrstatus =
-      statusFiltra == "all" || zgloszenie.status == statusFiltra;
+      statusFiltra == "all" ||
+      zgloszenie.status == statusFiltra;
+
     const filtrpriorytet =
-      priorytetFiltra == "all" || zgloszenie.priorytet == priorytetFiltra;
+      priorytetFiltra == "all" ||
+      zgloszenie.priorytet == priorytetFiltra;
 
     if (filtrstatus && filtrpriorytet) {
       element.style.display = "";
@@ -188,12 +159,68 @@ function filtrujZgloszenia() {
 
   if (widoczne == 0 && zgloszenia.length > 0) {
     const tekst = document.createElement("li");
+
     tekst.id = "brak-wynikow";
-    tekst.textContent = "Brak pasujących zgłoszen";
+    tekst.textContent = "Brak pasujących zgłoszeń";
+
+    lista.appendChild(tekst);
+  }
+
+  if (zgloszenia.length == 0) {
+    const tekst = document.createElement("li");
+
+    tekst.id = "pusta-lista";
+    tekst.textContent = "Pusta lista";
+
     lista.appendChild(tekst);
   }
 }
 
+// dodawanie zgłoszenia
+document
+  .getElementById("form-zgloszenia-JS")
+  .addEventListener("submit", function (event) {
+    event.preventDefault();
+
+    const tytul = document.getElementById("form-title")
+      .value.trim();
+
+    const zgloszenie = {
+      id: tablicaID,
+      tytul: tytul,
+      opis: document.getElementById("form-description")
+        .value.trim(),
+      priorytet: document.getElementById("form-priority")
+        .value,
+      status: "new"
+    };
+
+    // sprawdzanie czy tytuł już istnieje
+    if (zgloszenia.some(z => z.tytul === tytul)) {
+      alert("Nie mogą być dwa takie same zgłoszenia");
+      return;
+    }
+
+    // dodanie do tablicy
+    zgloszenia.push(zgloszenie);
+
+    // zapis do LocalStorage
+    Storage.dodaj(zgloszenie);
+
+    // zwiększenie ID
+    tablicaID++;
+    Storage.zapiszID(tablicaID);
+
+    // odświeżenie listy
+    renderujZgloszenia();
+    liczbaZgloszen();
+
+    // czyszczenie formularza
+    document.getElementById("form-title").value = "";
+    document.getElementById("form-description").value = "";
+  });
+
+// filtrowanie formularzem
 document
   .getElementById("filter-zgloszenia")
   .addEventListener("submit", function (event) {
@@ -205,4 +232,6 @@ document
     filtrujZgloszenia();
   });
 
+// uruchomienie po wejściu na stronę
+renderujZgloszenia();
 liczbaZgloszen();
