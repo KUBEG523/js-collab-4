@@ -1,0 +1,9 @@
+[
+  {
+    "id": 1,
+    "tytul": "Problem z komputerem ucznia",
+    "opis": "Komputer nie uruchamia systemu.",
+    "priorytet": "high",
+    "status": "new"
+  }
+]
