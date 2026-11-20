@@ -55,6 +55,7 @@ function usunZgloszenie(event) {
   if (element) {
     let index = zgloszenia.findIndex(
       (zgloszenie) => zgloszenie.id == Number(element.dataset.id),
+      localStorage.removeItem("zgloszenie")
     );
 
     if (index != -1) {
@@ -137,6 +138,11 @@ document
       btnDelete.type = "button";
       btnDelete.textContent = "Usuń";
       btnDelete.addEventListener("click", usunZgloszenie);
+
+      // dodanie zgłoszenia do local storage
+      localStorage.setItem("zgloszenie", JSON.stringify(zgloszenie));
+      let zapisane = JSON.parse(localStorage.getItem("zgloszenie"));
+      localStorage.zgloszenie.id++;
 
       // kontener na inputy
       const inputkontener = document.createElement("div");
