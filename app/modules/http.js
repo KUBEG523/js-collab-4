@@ -1,10 +1,11 @@
 import { lockoutimport } from "./lockout.js";
 
-export async function pobierzZgloszenia() {
+
+export async function pobierzdane() {
   const http_response = await fetch("./HTTP_JSON.json", { cache: "no-store" });
 
   if (!http_response.ok) {
-    throw new Error(`blad pobierania JSON: ${http_response.status}`);
+    throw new Error("blad pobierania JSON");
   }
   return http_response.json();
 }
@@ -67,7 +68,9 @@ export function JsonCheck(dane)
   });
 }
 
-function dodajzgloszeniehttp(zgloszenie) 
+// zasadniczo przekopiowane z main.js
+
+function importhttp(zgloszenie) 
 {
   const element = document.createElement("li");
   element.className = "list-element-li";
@@ -105,7 +108,7 @@ function zastapListehttp(noweZgloszenia) {
   let najwiekszeID = 0;
 
   noweZgloszenia.forEach((zgloszenie) => {
-    nowalista.appendChild(dodajzgloszeniehttp(zgloszenie));
+    nowalista.appendChild(importhttp(zgloszenie));
     najwiekszeID = Math.max(najwiekszeID, zgloszenie.id);
   });
 
@@ -115,10 +118,11 @@ function zastapListehttp(noweZgloszenia) {
   tablicaID = najwiekszeID + 1;
   liczbaZgloszen();
 }
+// zasadniczo najwazniejsze czyli import :3
 
 export function importFrom(wczytaj) {
   return lockoutimport(async () => {
-    if (!window.confirm("czy zastapic liste")) {
+    if (!window.confirm("czy zastapic liste :3")) {
       return;
     }
 
@@ -135,5 +139,42 @@ export function importFrom(wczytaj) {
 }
 
 document.getElementById("import_btn-HTTP").addEventListener("click", () => {
-  importFrom(pobierzZgloszenia);
+  importFrom(pobierzdane);
+});
+
+// eskport 
+
+export async function exporthttp() 
+{
+  const dane = JsonCheck(zgloszenia);
+  const tekst = JSON.stringify(dane, null, 2);
+
+  const plik = await window.showSaveFilePicker({
+    suggestedName: "HTTP_JSON.json",
+    types: [
+      {
+        description: "Plik JSON",
+        accept: { "application/json": [".json"] }
+      }
+    ]
+  });
+
+  const zapis = await plik.createWritable();
+  await zapis.write(tekst);
+  await zapis.close();
+}
+
+document.getElementById("export_btn-HTTP").addEventListener("click", () => {
+  lockoutimport(async () => {
+    try {
+      await exporthttp();
+      alert("zapisano JSON :3");
+    } catch (blad) {
+      if (blad.name === "AbortError") {
+        return;
+      }
+
+      alert("Błąd eksportu. " + blad.message);
+    }
+  });
 });
