@@ -1,11 +1,8 @@
-<<<<<<< HEAD
-  const lista = document.getElementById("list-zgloszenia");
-=======
 
 import Storage from "./modules/localStorage.js";
 
 const lista = document.getElementById("list-zgloszenia");
->>>>>>> origin/localstorage
+
 
 let zgloszenia = Storage.pobierz();
 let tablicaID = Storage.pobierzID();
@@ -138,16 +135,11 @@ function filtrujZgloszenia() {
     komunikat.remove();
   }
 
-<<<<<<< HEAD
-  zgloszenia.forEach((zgloszenie) => {
-    const element = lista.querySelector(`li[data-id="${zgloszenie.id}"]`);
-=======
   zgloszenia.forEach(zgloszenie => {
     const element = lista.querySelector(
       `li[data-id="${zgloszenie.id}"]`
     );
 
->>>>>>> origin/localstorage
     if (!element) return;
 
     const filtrstatus =
@@ -241,10 +233,8 @@ document
     filtrujZgloszenia();
   });
 
-<<<<<<< HEAD
-<<<<<<< HEAD
+
 liczbaZgloszen();
-=======
 liczbaZgloszen();
 
 
@@ -314,9 +304,8 @@ window.ustawZgloszenia = (noweDane) => {
 
   liczbaZgloszen();
 };
->>>>>>> origin/importjson
-=======
+
 // uruchomienie po wejściu na stronę
 renderujZgloszenia();
 liczbaZgloszen();
->>>>>>> origin/localstorage
+

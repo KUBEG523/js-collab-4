@@ -11,6 +11,8 @@ export const blokujInterfejs = (blokada) => {
 
   document.getElementById("import_btn-JS").disabled = blokada;
   document.getElementById("export_btn-JS").disabled = blokada;
+  document.getElementById("import_btn-HTTP").disabled = blokada;
+  document.getElementById("export_btn-HTTP").disabled = blokada;
 
   const lokalnyImport = document.getElementById("import_btn-local-JS");
 
