@@ -1,4 +1,5 @@
 import { lockoutimport } from "./lockout.js";
+import { eksportujJSON } from "./export.js";
 
 
 export async function pobierzdane() {
@@ -32,7 +33,7 @@ export function JsonCheck(dane)
 
     const { id, tytul, opis, priorytet, status } = rekord;
 
-    if (!Number.isInteger(id) || id < 1 || idstatus.has(id)) 
+    if (!Number.isSafeInteger(id) || id < 1 || idstatus.has(id)) 
     {
       throw new Error(`${zgloszenie} - blad ID -> zla wartosc lub juz takie jest`);
     }
@@ -43,7 +44,7 @@ export function JsonCheck(dane)
       throw new Error(`${zgloszenie} - tytul ma za duzo znakow`);
     }
 
-    if (tytuly.has(tytultrim)) {
+    if (tytuly.has(tytultrim.toLowerCase())) {
       throw new Error(`${zgloszenie} - sa 2 zgloszenia z tym samym tytulem.`);
     }
 
@@ -62,61 +63,14 @@ export function JsonCheck(dane)
     }
 
     idstatus.add(id);
-    tytuly.add(tytultrim);
+    tytuly.add(tytultrim.toLowerCase());
 
     return { id, tytul: tytultrim, opis: opistrim, priorytet, status };
   });
 }
 
-// zasadniczo przekopiowane z main.js
-
-function importhttp(zgloszenie) 
-{
-  const element = document.createElement("li");
-  element.className = "list-element-li";
-  element.dataset.id = zgloszenie.id;
-
-  const tekst = document.createElement("span");
-  tekst.className = "list-text";
-  tekst.textContent =`Tytuł: ${zgloszenie.tytul}. Opis: ${zgloszenie.opis} | Priorytet: ${zgloszenie.priorytet}`;
-
-  const status = document.createElement("select");
-  status.setAttribute("aria-label", "Status zgłoszenia " + zgloszenie.id);
-
-  statusOpcje.forEach((opcja) => {
-    status.add(new Option(opcja.tekst, opcja.value));
-  });
-
-  status.value = zgloszenie.status;
-  status.addEventListener("change", zmianaStatusu);
-
-  const usun = document.createElement("button");
-  usun.type = "button";
-  usun.textContent = "Usuń";
-  usun.addEventListener("click", usunZgloszenie);
-
-  const przyciski = document.createElement("div");
-  przyciski.className = "list-inputs";
-  przyciski.append(status, usun);
-
-  element.append(tekst, przyciski);
-  return element;
-}
-
 function zastapListehttp(noweZgloszenia) {
-  const nowalista = document.createDocumentFragment();
-  let najwiekszeID = 0;
-
-  noweZgloszenia.forEach((zgloszenie) => {
-    nowalista.appendChild(importhttp(zgloszenie));
-    najwiekszeID = Math.max(najwiekszeID, zgloszenie.id);
-  });
-
-
-  lista.replaceChildren(nowalista);
-  zgloszenia = noweZgloszenia;
-  tablicaID = najwiekszeID + 1;
-  liczbaZgloszen();
+  return window.ustawZgloszenia(noweZgloszenia);
 }
 // zasadniczo najwazniejsze czyli import :3
 
@@ -129,7 +83,7 @@ export function importFrom(wczytaj) {
     try {
       const dane = await wczytaj();
       const noweZgloszenia = JsonCheck(dane);
-      zastapListehttp(noweZgloszenia);
+      await zastapListehttp(noweZgloszenia);
     } catch (blad) {
       const powod = blad instanceof SyntaxError ? "Odebrane dane nie są poprawnym JSON-em.": blad.message;
 
@@ -146,7 +100,12 @@ document.getElementById("import_btn-HTTP").addEventListener("click", () => {
 
 export async function exporthttp() 
 {
-  const dane = JsonCheck(zgloszenia);
+  if (typeof window.showSaveFilePicker !== "function") {
+  eksportujJSON("HTTP_JSON.json");
+  return;
+}
+
+const dane = JsonCheck(window.zgloszenia);
   const tekst = JSON.stringify(dane, null, 2);
 
   const plik = await window.showSaveFilePicker({

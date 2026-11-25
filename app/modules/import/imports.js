@@ -40,13 +40,13 @@ export const inicjalizujImport = () => {
 
     const reader = new FileReader();
 
-    reader.onload = (e) => {
+    reader.onload = async (e) => {
 
       try {
 
         const dane = JSON.parse(e.target.result);
 
-        const wynik = zatwierdzImport(dane);
+       const wynik = await zatwierdzImport(dane);
 
         if (wynik) {
           alert("Import JSON zakończony pomyślnie!");

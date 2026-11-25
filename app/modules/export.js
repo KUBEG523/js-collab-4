@@ -1,5 +1,5 @@
 
-export const eksportujJSON = () => {
+export const eksportujJSON = (nazwa = "zgloszenia.json") => {
   const daneJSON = JSON.stringify(window.zgloszenia, null, 2);
 
   const plik = new Blob([daneJSON], {
@@ -10,7 +10,7 @@ export const eksportujJSON = () => {
 
   const link = document.createElement("a");
   link.href = url;
-  link.download = "zgloszenia.json";
+  link.download = nazwa;
 
   document.body.appendChild(link);
   link.click();

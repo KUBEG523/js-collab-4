@@ -1,5 +1,4 @@
-
-import Storage from "./modules/localStorage.js";
+import Storage from "./modules/localstorage.js";
 
 const lista = document.getElementById("list-zgloszenia");
 
@@ -9,7 +8,7 @@ let tablicaID = Storage.pobierzID();
 
 // zabezpieczenie przed powtórzeniem ID
 if (zgloszenia.length > 0) {
-  const maxID = Math.max(...zgloszenia.map(z => z.id));
+  const maxID = zgloszenia.reduce((max, z) => Math.max(max, z.id), 0);
   if (tablicaID <= maxID) {
     tablicaID = maxID + 1;
   }
@@ -104,6 +103,8 @@ function renderujZgloszenia() {
 
 // liczba zgłoszeń
 function liczbaZgloszen() {
+  window.zgloszenia = zgloszenia;
+
   const liczba = zgloszenia.length;
   aktywneLiczba = 0;
 
@@ -128,6 +129,7 @@ function liczbaZgloszen() {
 // filtrowanie
 function filtrujZgloszenia() {
   let widoczne = 0;
+  document.getElementById("pusta-lista")?.remove();
 
   const komunikat = document.getElementById("brak-wynikow");
 
@@ -185,6 +187,8 @@ document
 
     const tytul = document.getElementById("form-title")
       .value.trim();
+    if (!Number.isSafeInteger(tablicaID)) tablicaID = 1;
+    while (zgloszenia.some(z => z.id === tablicaID)) tablicaID++;
 
     const zgloszenie = {
       id: tablicaID,
@@ -197,7 +201,7 @@ document
     };
 
     // sprawdzanie czy tytuł już istnieje
-    if (zgloszenia.some(z => z.tytul === tytul)) {
+    if (zgloszenia.some(z => z.tytul.trim().toLowerCase() === tytul.toLowerCase())) {
       alert("Nie mogą być dwa takie same zgłoszenia");
       return;
     }
@@ -210,7 +214,6 @@ document
 
     // zwiększenie ID
     tablicaID++;
-    Storage.zapiszID(tablicaID);
 
     // odświeżenie listy
     renderujZgloszenia();
@@ -234,78 +237,15 @@ document
   });
 
 
-liczbaZgloszen();
-liczbaZgloszen();
-
-
 window.ustawZgloszenia = (noweDane) => {
   zgloszenia = noweDane;
-  window.zgloszenia = zgloszenia;
 
-  tablicaID = zgloszenia.length > 0
-    ? Math.max(...zgloszenia.map(z => z.id)) + 1
-    : 1;
-
-  // Usunięcie poprzednich zgłoszeń z HTML
-  lista.innerHTML = "";
-
-  // Utworzenie nowych zgłoszeń
-  zgloszenia.forEach((zgloszenie) => {
-
-    const noweZgloszenie = document.createElement("li");
-    noweZgloszenie.dataset.id = zgloszenie.id;
-    noweZgloszenie.classList.add("list-element-li");
-
-    const tekstzgloszenia = document.createElement("span");
-    tekstzgloszenia.className = "list-text";
-
-    tekstzgloszenia.textContent =
-      "Tytuł: " +
-      zgloszenie.tytul +
-      ". Opis: " +
-      zgloszenie.opis +
-      " | Priorytet: " +
-      zgloszenie.priorytet;
-
-    const status = document.createElement("select");
-
-    status.setAttribute(
-      "aria-label",
-      "Status zgłoszenia " + zgloszenie.id
-    );
-
-    statusOpcje.forEach((opcja) => {
-      const opcje = document.createElement("option");
-
-      opcje.value = opcja.value;
-      opcje.text = opcja.tekst;
-
-      status.appendChild(opcje);
-    });
-
-    status.value = zgloszenie.status;
-    status.addEventListener("change", zmianaStatusu);
-
-    const btnDelete = document.createElement("button");
-
-    btnDelete.type = "button";
-    btnDelete.textContent = "Usuń";
-    btnDelete.addEventListener("click", usunZgloszenie);
-
-    const inputkontener = document.createElement("div");
-
-    inputkontener.className = "list-inputs";
-    inputkontener.append(status, btnDelete);
-
-    noweZgloszenie.append(tekstzgloszenia, inputkontener);
-
-    lista.appendChild(noweZgloszenie);
-  });
+  const maxID = zgloszenia.reduce((max, z) => Math.max(max, z.id), 0);
+  tablicaID = maxID + 1;
 
   liczbaZgloszen();
+  return Storage.zapisz(zgloszenia, tablicaID);
 };
 
 // uruchomienie po wejściu na stronę
-renderujZgloszenia();
 liczbaZgloszen();
-

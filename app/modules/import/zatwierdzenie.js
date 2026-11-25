@@ -13,7 +13,5 @@ export const zatwierdzImport = (dane) => {
     return false;
   }
 
-  window.ustawZgloszenia(dane);
-
-  return true;
+ return window.ustawZgloszenia(dane);
 };
